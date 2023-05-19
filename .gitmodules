@@ -1,0 +1,9 @@
+[submodule "PycubedMEKF"]
+	path = PycubedMEKF
+	url = https://github.com/PyGNC/PycubedMEKF
+[submodule "lib/PycubedMEKF"]
+	path = src/lib/PycubedMEKF
+	url = https://github.com/PyGNC/PycubedMEKF
+[submodule "src/lib/PycubedEKF"]
+	path = src/lib/PycubedEKF
+	url = https://github.com/PyGNC/PycubedEKF
