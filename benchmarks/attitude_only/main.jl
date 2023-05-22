@@ -81,7 +81,6 @@ end
     ω0 = ω0 / norm(ω0) * deg2rad(5.0)
 
     x0 = SP.state_from_osc(x_osc_0, q0, ω0)
-    @show x0.position
 
     function measure(state, env)
         nr_sun = SatelliteDynamics.sun_position(env.time)

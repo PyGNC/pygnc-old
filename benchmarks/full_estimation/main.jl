@@ -5,6 +5,7 @@ using SatellitePlayground
 SP = SatellitePlayground
 using SatelliteDynamics
 using LinearAlgebra
+using Distributions
 
 function randomMatrix(covariance)
     ϕ = √covariance * randn(3)
@@ -87,7 +88,6 @@ end
     sys.path.insert(0, ".")
     """
     flight_software = pyimport("src")
-    pyimport("importlib").reload(flight_software)
     EKF = flight_software.EKF([x0.position; x0.velocity])
 
     function measure(state, env)
@@ -100,7 +100,7 @@ end
         br_mag = randomMatrix(0.01) * normalize(env.b)
 
         gps_err = Normal(0, 5000)
-        gps_noise = rand(err_model, 3)
+        gps_noise = rand(gps_err, 3)
         position = state.position + gps_noise
 
         return (
