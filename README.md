@@ -1,2 +1,3 @@
-# FlightSoftwareTests
-Planning to set up CI for our flight software.
+# Pycubed Guidance Navigation and Control
+- Contains super simple EKF + MEKF for estimation
+- Test enviorment for oribtal, atittude, and orbital+attitude estimation
