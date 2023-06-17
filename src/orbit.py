@@ -20,11 +20,7 @@ class EKF(EKFCore):
             position = np.array(x[0:3])
             velocity = np.array(x[3:6])
             dx = velocity
-            # print(position, velocity)
-            # print(mu, position)
-            # print("test")
             dv = (-mu * position / (np.linalg.norm(position)**3))
-            # dv /= 1e6 # Scale factor for km/s^2
             return np.concatenate((dx, dv))
         
         def time_dynamics(x, dt):

@@ -13,7 +13,7 @@ function epoch_to_unix_time(time)
 end
 
 
-@testset "Estimation" begin
+begin
 
     δt = 1.0
     ekf_hist = []
@@ -36,7 +36,7 @@ end
 
     function measure(state, env)
         # Gaussian white noise to position
-        err_model = Normal(0, 5000)
+        err_model = Normal(0, 1000)
         noise = rand(err_model, 3)
         return state.position + noise
     end
@@ -52,7 +52,11 @@ end
     end
 
 
-    (state_hist, time) = SP.simulate(control_law, max_iterations=1000, measure=measure, dt=δt, initial_condition=x0, silent=true)
+    env = copy(SP.default_environment)
+    env.config = SP.EnvironmentConfig(
+        1, 1, false, false, false, false
+    )
+    (state_hist, time) = SP.simulate(control_law, max_iterations=1000, measure=measure, dt=δt, initial_condition=x0, silent=true, initial_environment=env)
     ekf_hist = [
         entry for entry in ekf_hist
     ]
@@ -101,7 +105,7 @@ end
             xlabel="Time (minutes)",
             ylabel="Position Error (km)",
             labels=["x_err" "y_err" "z_errr"],
-            linecolor=["blue" "blue" "blue"],
+            linecolor=["red" "green" "blue"],
         )
     )
 
