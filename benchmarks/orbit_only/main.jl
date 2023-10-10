@@ -1,23 +1,19 @@
-using PyCall
-using Test
-using Plots
-using SatellitePlayground
-SP = SatellitePlayground
-using SatelliteDynamics
-using LinearAlgebra
-using Distributions
-
-function epoch_to_unix_time(time)
-    unix_start = Epoch("1970-01-01")
-    return (time.days - unix_start.days) * 86400 + time.seconds - unix_start.seconds
+begin
+    using PyCall
+    using Test
+    using Plots
+    using SatellitePlayground
+    SP = SatellitePlayground
+    using SatelliteDynamics
+    using LinearAlgebra
+    using Distributions
+    include("../utils/stats.jl")
 end
-
 
 begin
 
     δt = 1.0
     ekf_hist = []
-
 
     x_osc_0 = [400e3 + SatelliteDynamics.R_EARTH, 0.0, deg2rad(50), deg2rad(-1.0), 0.0, 0.0] # a, e, i, Ω, ω, M
     q0 = normalize([0.030, 0.502, 0.476, 0.780])
@@ -54,9 +50,14 @@ begin
 
     env = copy(SP.default_environment)
     env.config = SP.EnvironmentConfig(
-        1, 1, false, false, false, false
-    )
-    (state_hist, time) = SP.simulate(control_law, max_iterations=1000, measure=measure, dt=δt, initial_condition=x0, silent=true, initial_environment=env)
+        n_gravity=1,
+        m_gravity=1,
+        include_drag=false,
+        include_solar_radiation_pressure=false,
+        include_sun_gravity=false,
+        include_moon_gravity=false,
+        include_gravity_gradient_torque=false)
+    (state_hist, time) = SP.simulate(control_law, max_iterations=1000, measure=measure, dt=δt, initial_condition=x0, silent=true, environment=env)
     ekf_hist = [
         entry for entry in ekf_hist
     ]
@@ -70,6 +71,13 @@ begin
     v_err /= 1e3
 
     time /= 60
+
+    println(error_summary(r_err, "km"))
+    # Mean: 7.7235817186068765 km
+    # Std. Dev.: 0.8509343477523729 km
+    println(error_summary(v_err, "km/s"))
+    # Mean: 0.7553283969895653 km/s
+    # Std. Dev.: 0.3392106538461736 km/s
 
     display(
         plot(
